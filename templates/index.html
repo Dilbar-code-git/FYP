@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<section class="container">
+  <div class="panel">
+    <h2>Upload Sales Data</h2>
+    <input type="file" id="fileInput" />
+    <button id="uploadBtn">Upload</button>
+    <div id="uploadResult" class="result"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Data Preview</h2>
+    <button id="previewBtn">Preview</button>
+    <div id="previewArea" class="result"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Model Training</h2>
+    <label>Target Column: <input type="text" id="targetColumn" placeholder="sales"/></label>
+    <button id="trainBtn">Train Models</button>
+    <div id="trainResult" class="result"></div>
+  </div>
+</section>
+{% endblock %}
