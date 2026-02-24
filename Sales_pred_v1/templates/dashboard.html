@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalesIQ Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+</head>
+<body class="dashboard-body">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-chart-line"></i>
+            <span>SalesIQ</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-tab="upload"><i class="fas fa-upload"></i><span>Upload Data</span></a>
+            <a href="#" class="nav-item" data-tab="analysis" id="nav-analysis"><i class="fas fa-search"></i><span>Analysis</span></a>
+            <a href="#" class="nav-item" data-tab="training" id="nav-training"><i class="fas fa-brain"></i><span>Train Models</span></a>
+            <a href="#" class="nav-item" data-tab="results" id="nav-results"><i class="fas fa-chart-bar"></i><span>Results</span></a>
+            <a href="#" class="nav-item" data-tab="insights" id="nav-insights"><i class="fas fa-lightbulb"></i><span>Insights</span></a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="/"><i class="fas fa-home"></i> Home</a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="top-bar">
+            <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+            <div class="top-bar-title" id="pageTitle">Upload Data</div>
+            <div class="top-bar-right">
+                <div class="status-badge" id="statusBadge">
+                    <i class="fas fa-circle"></i> No data loaded
+                </div>
+            </div>
+        </header>
+
+        <!-- UPLOAD TAB -->
+        <div class="tab-content active" id="tab-upload">
+            <div class="page-header">
+                <h2>Upload Sales Data</h2>
+                <p>Upload your CSV or Excel file to begin analysis</p>
+            </div>
+
+            <div class="upload-grid">
+                <div class="card upload-zone" id="uploadZone">
+                    <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                    <h3>Drag & Drop Your File</h3>
+                    <p>Supports CSV (.csv) and Excel (.xlsx, .xls) files</p>
+                    <label class="btn-primary" for="fileInput"><i class="fas fa-folder-open"></i> Browse Files</label>
+                    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" hidden>
+                    <p class="upload-hint">Max file size: 50MB</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-flask"></i> No Data? Try Sample Dataset</div>
+                    <p style="color:#94a3b8;margin-bottom:1rem;">Use our built-in 4-year sample dataset to explore all features.</p>
+                    <button class="btn-secondary w-full" id="sampleBtn"><i class="fas fa-database"></i> Load Sample Data</button>
+                    <div class="sample-info">
+                        <div class="info-item"><i class="fas fa-calendar"></i> 48 months (2020–2023)</div>
+                        <div class="info-item"><i class="fas fa-chart-line"></i> Sales with trend & seasonality</div>
+                        <div class="info-item"><i class="fas fa-tags"></i> Product & Region columns</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- File Preview -->
+            <div class="card" id="filePreviewCard" style="display:none">
+                <div class="card-header">
+                    <i class="fas fa-table"></i> Data Preview
+                    <span class="badge" id="shapeBadge"></span>
+                </div>
+                <div class="preview-scroll" id="previewTable"></div>
+            </div>
+
+            <!-- Column Config -->
+            <div class="card" id="colConfigCard" style="display:none">
+                <div class="card-header"><i class="fas fa-sliders-h"></i> Configure Columns</div>
+                <div class="col-config-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-alt"></i> Date / Time Column</label>
+                        <select id="dateColSelect" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-dollar-sign"></i> Sales / Revenue Column</label>
+                        <select id="salesColSelect" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-check"></i> Forecast Period (months)</label>
+                        <input type="number" id="forecastPeriods" class="form-control" value="12" min="3" max="24">
+                    </div>
+                </div>
+                <button class="btn-primary" id="analyzeBtn"><i class="fas fa-chart-line"></i> Analyze Data</button>
+            </div>
+
+            <div class="loading-overlay" id="uploadLoading" style="display:none">
+                <div class="spinner"></div>
+                <p id="loadingText">Processing your data...</p>
+            </div>
+        </div>
+
+        <!-- ANALYSIS TAB -->
+        <div class="tab-content" id="tab-analysis">
+            <div class="page-header">
+                <h2>Sales Analysis</h2>
+                <p>Exploratory data analysis of your sales data</p>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="kpi-grid" id="kpiGrid">
+                <div class="kpi-card"><div class="kpi-icon green"><i class="fas fa-dollar-sign"></i></div><div><div class="kpi-label">Total Sales</div><div class="kpi-value" id="kpiTotal">—</div></div></div>
+                <div class="kpi-card"><div class="kpi-icon blue"><i class="fas fa-chart-line"></i></div><div><div class="kpi-label">Avg Monthly Sales</div><div class="kpi-value" id="kpiAvg">—</div></div></div>
+                <div class="kpi-card"><div class="kpi-icon purple"><i class="fas fa-arrow-trend-up"></i></div><div><div class="kpi-label">Overall Growth</div><div class="kpi-value" id="kpiGrowth">—</div></div></div>
+                <div class="kpi-card"><div class="kpi-icon orange"><i class="fas fa-calendar"></i></div><div><div class="kpi-label">Data Points</div><div class="kpi-value" id="kpiCount">—</div></div></div>
+            </div>
+
+            <div class="chart-grid">
+                <div class="card chart-large">
+                    <div class="card-header"><i class="fas fa-chart-area"></i> Sales Over Time</div>
+                    <canvas id="timeSeriesChart"></canvas>
+                </div>
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-wave-square"></i> Seasonal Pattern</div>
+                    <canvas id="seasonalChart"></canvas>
+                </div>
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-chart-bar"></i> Annual Sales</div>
+                    <canvas id="annualChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:1.5rem">
+                <div class="card-header"><i class="fas fa-brain"></i> Ready to Train Models?</div>
+                <p style="color:#94a3b8;margin-bottom:1rem;">Train all 4 ML models (Linear Regression, Random Forest, XGBoost, ARIMA) on your data.</p>
+                <button class="btn-primary" id="trainBtn"><i class="fas fa-play"></i> Train All Models</button>
+            </div>
+        </div>
+
+        <!-- TRAINING TAB -->
+        <div class="tab-content" id="tab-training">
+            <div class="page-header">
+                <h2>Model Training</h2>
+                <p>Training and evaluating all machine learning models</p>
+            </div>
+            <div class="training-container" id="trainingContainer">
+                <div class="training-start">
+                    <div class="training-icon"><i class="fas fa-brain"></i></div>
+                    <h3>Models Ready to Train</h3>
+                    <p>Click "Train All Models" from the Analysis tab to start training</p>
+                    <button class="btn-primary" id="trainBtn2"><i class="fas fa-play"></i> Start Training</button>
+                </div>
+            </div>
+
+            <!-- Training Progress -->
+            <div id="trainingProgress" style="display:none">
+                <div class="models-progress">
+                    <div class="model-progress-item" id="prog-lr">
+                        <div class="model-prog-header"><i class="fas fa-code-branch"></i> Linear Regression <span class="prog-status">Waiting...</span></div>
+                        <div class="progress-bar"><div class="progress-fill" id="fill-lr"></div></div>
+                    </div>
+                    <div class="model-progress-item" id="prog-rf">
+                        <div class="model-prog-header"><i class="fas fa-tree"></i> Random Forest <span class="prog-status">Waiting...</span></div>
+                        <div class="progress-bar"><div class="progress-fill" id="fill-rf"></div></div>
+                    </div>
+                    <div class="model-progress-item" id="prog-xgb">
+                        <div class="model-prog-header"><i class="fas fa-bolt"></i> XGBoost <span class="prog-status">Waiting...</span></div>
+                        <div class="progress-bar"><div class="progress-fill" id="fill-xgb"></div></div>
+                    </div>
+                    <div class="model-progress-item" id="prog-arima">
+                        <div class="model-prog-header"><i class="fas fa-wave-square"></i> ARIMA <span class="prog-status">Waiting...</span></div>
+                        <div class="progress-bar"><div class="progress-fill" id="fill-arima"></div></div>
+                    </div>
+                </div>
+                <div class="training-log" id="trainingLog"></div>
+            </div>
+        </div>
+
+        <!-- RESULTS TAB -->
+        <div class="tab-content" id="tab-results">
+            <div class="page-header">
+                <h2>Prediction Results</h2>
+                <p>Model comparison and future sales forecasts</p>
+            </div>
+
+            <!-- Best Model Banner -->
+            <div class="best-model-banner" id="bestModelBanner" style="display:none">
+                <div class="best-model-content">
+                    <div class="trophy"><i class="fas fa-trophy"></i></div>
+                    <div>
+                        <div class="best-model-label">Best Performing Model</div>
+                        <div class="best-model-name" id="bestModelName">—</div>
+                    </div>
+                    <div class="best-model-metrics" id="bestModelMetrics"></div>
+                </div>
+            </div>
+
+            <!-- Model Comparison Table -->
+            <div class="card">
+                <div class="card-header"><i class="fas fa-table"></i> Model Performance Comparison</div>
+                <div class="table-scroll">
+                    <table class="metrics-table" id="metricsTable">
+                        <thead>
+                            <tr><th>Model</th><th>MAE</th><th>RMSE</th><th>R² Score</th><th>MAPE (%)</th><th>Status</th></tr>
+                        </thead>
+                        <tbody id="metricsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="chart-grid" style="margin-top:1.5rem">
+                <div class="card chart-large">
+                    <div class="card-header"><i class="fas fa-chart-line"></i> Actual vs Predicted (Test Set)</div>
+                    <canvas id="predictionChart"></canvas>
+                </div>
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-bar-chart"></i> RMSE Comparison</div>
+                    <canvas id="rmseChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Forecast Chart -->
+            <div class="card" style="margin-top:1.5rem">
+                <div class="card-header"><i class="fas fa-crystal-ball"></i> Future Sales Forecast</div>
+                <canvas id="forecastChart" style="max-height:350px"></canvas>
+            </div>
+
+            <!-- Feature Importance -->
+            <div class="card" id="featureImportanceCard" style="margin-top:1.5rem;display:none">
+                <div class="card-header"><i class="fas fa-star"></i> Feature Importance (Top 10)</div>
+                <canvas id="featureChart" style="max-height:300px"></canvas>
+            </div>
+        </div>
+
+        <!-- INSIGHTS TAB -->
+        <div class="tab-content" id="tab-insights">
+            <div class="page-header">
+                <h2>Business Insights</h2>
+                <p>AI-generated insights from your sales data</p>
+            </div>
+            <div class="insights-grid" id="insightsGrid">
+                <div class="insight-placeholder">
+                    <i class="fas fa-lightbulb"></i>
+                    <p>Train models first to generate business insights</p>
+                </div>
+            </div>
+
+            <!-- Forecast Table -->
+            <div class="card" id="forecastTableCard" style="display:none;margin-top:1.5rem">
+                <div class="card-header"><i class="fas fa-calendar-alt"></i> Detailed Forecast Values</div>
+                <div class="table-scroll">
+                    <table class="metrics-table">
+                        <thead><tr><th>#</th><th>Month</th><th>Predicted Sales</th><th>vs Avg (Last 3M)</th></tr></thead>
+                        <tbody id="forecastTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer"></div>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
