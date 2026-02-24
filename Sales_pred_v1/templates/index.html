@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalesIQ - Intelligent Sales Prediction Tool</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+</head>
+<body class="landing-body">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-chart-line"></i>
+            <span>SalesIQ</span>
+        </div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="/dashboard" class="btn-nav">Launch App</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge"><i class="fas fa-sparkles"></i> AI-Powered Predictions</div>
+            <h1>Predict Sales.<br><span class="gradient-text">Grow Smarter.</span></h1>
+            <p>Upload your sales data and get instant ML-powered predictions using Linear Regression, Random Forest, ARIMA, and XGBoost. Make data-driven decisions with confidence.</p>
+            <div class="hero-btns">
+                <a href="/dashboard" class="btn-primary"><i class="fas fa-rocket"></i> Get Started Free</a>
+                <a href="#how-it-works" class="btn-ghost"><i class="fas fa-play"></i> See How It Works</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat"><span>4</span><label>ML Models</label></div>
+                <div class="stat"><span>99%</span><label>Accuracy</label></div>
+                <div class="stat"><span>∞</span><label>Data Types</label></div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="glass-card">
+                <div class="mini-chart-header">
+                    <span>Sales Forecast</span>
+                    <span class="badge-green">+23.4% ↑</span>
+                </div>
+                <canvas id="heroChart" width="300" height="160"></canvas>
+                <div class="mini-stats">
+                    <div><label>Best Model</label><span>Random Forest</span></div>
+                    <div><label>R² Score</label><span>0.943</span></div>
+                    <div><label>RMSE</label><span>342.1</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+        <div class="section-title">
+            <h2>Everything You Need</h2>
+            <p>A complete sales intelligence platform</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-upload"></i></div>
+                <h3>Universal Data Upload</h3>
+                <p>Upload CSV or Excel files from any business. Auto-detects date and sales columns.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                <h3>4 ML Algorithms</h3>
+                <p>Linear Regression, Random Forest, XGBoost, and ARIMA compete to find the best model.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
+                <h3>Visual Dashboard</h3>
+                <p>Interactive charts showing historical trends, forecasts, and model comparisons.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-lightbulb"></i></div>
+                <h3>Business Insights</h3>
+                <p>Automatic insights on seasonality, growth trends, and sales volatility.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-trophy"></i></div>
+                <h3>Auto Model Selection</h3>
+                <p>System automatically picks the best-performing model based on RMSE evaluation.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-calendar-alt"></i></div>
+                <h3>Flexible Forecasting</h3>
+                <p>Predict 3 to 24 months into the future with confidence intervals.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="section-title">
+            <h2>How It Works</h2>
+            <p>3 simple steps to get predictions</p>
+        </div>
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">01</div>
+                <h3>Upload Your Data</h3>
+                <p>Upload a CSV or Excel file containing your sales history. Or use our sample dataset.</p>
+            </div>
+            <div class="step-arrow">→</div>
+            <div class="step">
+                <div class="step-num">02</div>
+                <h3>Configure & Train</h3>
+                <p>Select your date and sales columns. The system trains all 4 ML models automatically.</p>
+            </div>
+            <div class="step-arrow">→</div>
+            <div class="step">
+                <div class="step-num">03</div>
+                <h3>Get Predictions</h3>
+                <p>View forecasts, model comparisons, business insights, and export results.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <h2>Ready to Predict Your Sales?</h2>
+        <p>No signup required. Upload your data and get insights in minutes.</p>
+        <a href="/dashboard" class="btn-primary btn-large"><i class="fas fa-rocket"></i> Launch Dashboard</a>
+    </section>
+
+    <footer>
+        <p><i class="fas fa-chart-line"></i> SalesIQ — AI-Powered Sales Prediction Tool | Built with Python, Flask & ML</p>
+    </footer>
+
+    <script>
+        // Hero mini chart
+        const ctx = document.getElementById('heroChart').getContext('2d');
+        const labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const actual = [12000,13500,11800,14200,15600,14800,16200,17100,16500,18200,19100,20500];
+        const forecast = [null,null,null,null,null,null,null,null,null,null,null,20500,21200,22800,24100];
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [...labels, 'Jan\'24','Feb\'24','Mar\'24'],
+                datasets: [{
+                    label: 'Actual',
+                    data: actual,
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99,102,241,0.15)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 3
+                },{
+                    label: 'Forecast',
+                    data: forecast,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16,185,129,0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderDash: [6,3],
+                    pointRadius: 3
+                }]
+            },
+            options: {
+                responsive: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { ticks: { color: '#94a3b8', font: { size: 10 }, callback: v => '$' + (v/1000).toFixed(0) + 'k' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
